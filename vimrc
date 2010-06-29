@@ -69,3 +69,5 @@ EOF
 endfunction
 map <F7> :w<CR> :call RunRspec()<cr>
 map <F6> :A<CR> 
+
+set list listchars=tab:>-,trail:.,extends:>
