@@ -82,7 +82,7 @@ ruby << EOF
   $curbuf.count.times do |i|
     lines << $curbuf[i + 1]
   end
-  puts eval(lines.join("\n"))
+  eval(lines.join("\n"))
 EOF
 endfunction
 
