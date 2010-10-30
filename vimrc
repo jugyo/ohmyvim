@@ -75,8 +75,8 @@ set list listchars=tab:>-,trail:.,extends:>
 " BufExplorer
 nmap <c-l> :BufExplorer<CR>
 
-" Eval Buffer
-function! EvalBuffer()
+" Run as Ruby
+function! RunAsRuby()
 ruby << EOF
   lines = []
   $curbuf.count.times do |i|
@@ -86,8 +86,19 @@ ruby << EOF
 EOF
 endfunction
 
-" Eval line
-function! EvalLine() range
+" Do It as Ruby
+function! DoItAsRuby() range
+  let str = ""
+  for i in range(a:firstline, a:lastline)
+    let str = str . getline(i) . "\n"
+  endfor
+ruby << EOF
+  eval(VIM.evaluate('str'))
+EOF
+endfunction
+
+" Print It as Ruby
+function! PrintItAsRuby() range
   let str = ""
   for i in range(a:firstline, a:lastline)
     let str = str . getline(i) . "\n"
@@ -109,6 +120,7 @@ ruby << EOF
 EOF
 endfunction
 
-map <leader>r :call EvalBuffer()<CR>
-map <leader>e :call EvalLine()<CR>
+map <leader>r :call RunAsRuby()<CR>
+map <leader>d :call DoItAsRuby()<CR>
+map <leader>p :call PrintItAsRuby()<CR>
 map <leader>s :source ~/.vimrc<CR>
