@@ -74,3 +74,41 @@ set list listchars=tab:>-,trail:.,extends:>
 
 " BufExplorer
 nmap <c-l> :BufExplorer<CR>
+
+" Eval Buffer
+function! EvalBuffer()
+ruby << EOF
+  lines = []
+  $curbuf.count.times do |i|
+    lines << $curbuf[i + 1]
+  end
+  puts eval(lines.join("\n"))
+EOF
+endfunction
+
+" Eval line
+function! EvalLine() range
+  let str = ""
+  for i in range(a:firstline, a:lastline)
+    let str = str . getline(i) . "\n"
+  endfor
+ruby << EOF
+  require 'stringio'
+  $stdout = StringIO.new
+  begin
+    result = eval(VIM.evaluate('str')).inspect
+  rescue Exception => e
+    result = e.class.name
+  end
+  unless $stdout.string.empty?
+    result = $stdout.string
+  end
+  result.split(/\n/).reverse_each do |line|
+    $curbuf.append VIM.evaluate('a:lastline').to_i, line
+  end
+EOF
+endfunction
+
+map <leader>r :call EvalBuffer()<CR>
+map <leader>e :call EvalLine()<CR>
+map <leader>s :source ~/.vimrc<CR>
